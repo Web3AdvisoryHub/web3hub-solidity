@@ -35,3 +35,15 @@ contract TimeBomb {
         return bombActivated;
     }
 }
+    bool private lock = false;  // Reentrancy guard
+
+    // Fixed deactivateBomb function to prevent reentrancy
+    function deactivateBomb() public onlyOwner {
+        require(!lock, "No reentrancy allowed");
+        lock = true;
+
+        require(bombActivated, "Bomb not activated");
+        bombActivated = false;
+
+        lock = false;  // Reset the lock after the state change
+    }
